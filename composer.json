@@ -1,0 +1,20 @@
+{
+    "name": "bondalex96/funpay-test",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Alexandr Bondarenko",
+            "email": "bondalex96@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.4.0",
+        "phpunit/phpunit": "^8.5"
+    }
+}
