@@ -14,8 +14,8 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения", "сумма", "кошелек". Содержимое сообщения:'
-                .' "Кошелек Яндекс.Денег указан неверно"'
+                .'код подтверждения,сумма,кошелек. Содержимое сообщения:'
+                .' "Кошелек Яндекс.Денег указан неверно".'
             )
         );
         ConfirmationMessageParser::parse("Кошелек Яндекс.Денег указан неверно");
@@ -26,8 +26,8 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения", "сумма", "кошелек". Содержимое сообщения:'
-                .' "Сумма указана неверно"'
+                .'код подтверждения,сумма,кошелек. Содержимое сообщения:'
+                .' "Сумма указана неверно".'
             )
         );
         ConfirmationMessageParser::parse("Сумма указана неверно");
@@ -38,8 +38,8 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения", "сумма", "кошелек". Содержимое сообщения:'
-                .' "Недостаточно средств"'
+                .'код подтверждения,сумма,кошелек. Содержимое сообщения:'
+                .' "Недостаточно средств".'
             )
         );
         ConfirmationMessageParser::parse("Недостаточно средств");
@@ -50,7 +50,7 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения", "сумма", "кошелек". Содержимое сообщения:'
+                .'код подтверждения,сумма,кошелек. Содержимое сообщения:'
             )
         );
         ConfirmationMessageParser::parse("");
@@ -63,7 +63,7 @@ final class ConfirmationMessageParserTest extends TestCase
     public function testParseValidMessage(string $message): void
     {
         $data = ConfirmationMessageParser::parse(
-            "Пароль: 4444\nСпишется 1,01р.\nПеревод на счет 410012312312312"
+            $message
         );
 
         $this->assertEquals("4444", $data->getConfirmationCode());
@@ -81,7 +81,7 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения". Содержимое сообщения: '. $message
+                .'код подтверждения. Содержимое сообщения: "'. $message.'".'
             )
         );
         ConfirmationMessageParser::parse($message);
@@ -96,7 +96,7 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"кошелек". Содержимое сообщения: '. $message
+                .'сумма. Содержимое сообщения: "'. $message.'".'
             )
         );
         ConfirmationMessageParser::parse($message);
@@ -111,7 +111,7 @@ final class ConfirmationMessageParserTest extends TestCase
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
-                .'"код подтверждения". Содержимое сообщения: '. $message
+                .'кошелек. Содержимое сообщения: "'. $message.'".'
             )
         );
         ConfirmationMessageParser::parse($message);
