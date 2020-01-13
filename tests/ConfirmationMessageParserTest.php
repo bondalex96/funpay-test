@@ -73,10 +73,10 @@ final class ConfirmationMessageParserTest extends TestCase
     }
 
     /**
-     * @dataProvider changedConfirmationCodeInformationProvider
+     * @dataProvider changedInvalidInformationAboutConfirmationCodeProvider
      * @param string $message
      */
-    public function testParseMessageWithChangedConfirmationCodeInformation(string $message): void
+    public function testParseMessageWithChangedInvalidInfoAboutConfirmationCode(string $message): void
     {
         $this->expectExceptionObject(
             new \Exception(
@@ -85,6 +85,20 @@ final class ConfirmationMessageParserTest extends TestCase
             )
         );
         ConfirmationMessageParser::parse($message);
+    }
+
+
+    /**
+     * @dataProvider changedValidInformationAboutConfirmationCodeProvider
+     * @param string $message
+     */
+    public function testParseMessageWithChangedValidInfoAboutConfirmationCode(string $message): void
+    {
+        $data = ConfirmationMessageParser::parse(
+            $message
+        );
+
+        $this->assertEquals("4444", $data->getConfirmationCode());
     }
 
     /**
@@ -129,15 +143,20 @@ final class ConfirmationMessageParserTest extends TestCase
         ];
     }
 
-    public function changedConfirmationCodeInformationProvider(): array
+    public function changedValidInformationAboutConfirmationCodeProvider(): array
     {
-        //TODO: потенциально, некоторые варианты можно распарсить, чтобы функция
-        // была более гибкой к изменениям. Вероятно, следует добавить отдельный кейс
         return [
             "С измененным названием поля" => ["Password: 4444\nСпишется 1,01р.\nПеревод на счет 410012312312312"],
+            "Без двоеточия" => ["Пароль 4444\nСпишется 1,01р.\nПеревод на счет 410012312312312"],
+            "Без пробела между двоеточием" => ["Пароль:4444\nСпишется 1,01р.\nПеревод на счет 410012312312312"],
+        ];
+    }
+
+    public function changedInvalidInformationAboutConfirmationCodeProvider(): array
+    {
+        return [
             "Без значения поля 'Пароль'" => ["Пароль: \nСпишется 1,01р.\nПеревод на счет 410012312312312"],
             "Без  поля 'Пароль'" => ["Спишется 1,01р.\nПеревод на счет 410012312312312"],
-            "С лишними кавычками" => ["Пароль 4444\nСпишется 1,01р.\nПеревод на счет 410012312312312"],
         ];
     }
 

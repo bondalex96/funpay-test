@@ -91,9 +91,14 @@ final class ConfirmationMessageParser
      */
     private static function extractConfirmationCode(string $message): ?string
     {
-        preg_match('/Пароль:\s(\d{4})/', $message, $matches);
+        //Мне не нравится вариант ориентации на 4 цифры пароля.
+        // Однако, этот вариант лучше ориентирован на изменения
+        // пунктуации и текста, но самый ненадежный. Тут принято
+        // компромиссное решение. Надеюсь, оно оптимально в данной ситуации.
+        $confirmationCodePattern = '/\b(\d{4})\b/';
+        preg_match($confirmationCodePattern, $message, $matches);
 
-        return  $matches[1] ?? null;
+        return  $matches[0] ?? null;
     }
 
     /**
