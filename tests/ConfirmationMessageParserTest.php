@@ -117,11 +117,26 @@ final class ConfirmationMessageParserTest extends TestCase
     }
 
     /**
-     * @dataProvider changedPaymentAccountInformationProvider
+     * @dataProvider changedValidInformationAboutPaymentAccountProvider
      * @param string $message
      */
-    public function testParseMessageWithChangedPaymentAccountInformation(string $message): void
-    {
+    public function testParseMessageWithChangedValidInfoAboutPaymentAccount(
+        string $message
+    ): void {
+        $data = ConfirmationMessageParser::parse(
+            $message
+        );
+
+        $this->assertEquals("410012312312312", $data->getPaymentAccount());
+    }
+
+    /**
+     * @dataProvider changedInvalidInformationAboutPaymentAccountProvider
+     * @param string $message
+     */
+    public function testParseMessageWithChangedInvalidInfoAboutPaymentAccount(
+        string $message
+    ): void {
         $this->expectExceptionObject(
             new \Exception(
                 'Не удалось произвести разбор данных:'
@@ -173,16 +188,23 @@ final class ConfirmationMessageParserTest extends TestCase
         ];
     }
 
-    public function changedPaymentAccountInformationProvider(): array
+    public function changedValidInformationAboutPaymentAccountProvider(): array
     {
-        //TODO: потенциально, некоторые варианты можно распарсить, чтобы функция
-        // была более гибкой к изменениям. Вероятно, следует добавить отдельный кейс
         return [
             "С лишним двоеточием" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет: 410012312312312"],
+            "С лишним двоеточием и без пробела" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет:410012312312312"],
+            "С измененным названием поля" => ["Пароль: 4444\nСпишется 1,01р.\nКошелек 410012312312312"],
+        ];
+    }
+
+    public function changedInValidInformationAboutPaymentAccountProvider(): array
+    {
+        return [
             "Без поля 'Перевод на счет'" => ["Пароль: 4444\nСпишется 1,01р."],
             "Без информации о номере кошелька" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет"],
-            "С невалидным номером кошелька" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет: 0000"],
-            "С измененным названием поля" => ["Пароль: 4444\nСпишется 1,01р.\nTransfer to the account 410012312312312"],
+            "С коротким номером кошелька" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет: 41001123"],
+            "С длинным номером кошелька" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет: 41001123123123123"],
+            "С первыми пятью цифрами, отличными от 41001" => ["Пароль: 4444\nСпишется 1,01р.\nПеревод на счет 400002312312312"],
         ];
     }
 }

@@ -45,17 +45,16 @@ final class ConfirmationMessageParser
      */
     private static function extractPaymentAccount(string $message): ?string
     {
-        //TODO: в тестах добавить кейс на счет длины
-        //Документация Яндекс кошелька говорит о том, что номер кошелька имеет
-        // формат 41001********* (14 цифр), однако эмулятор ведет себя так,
-        // как-будто номер кошелька может составлять от 13 до 16 цифр.
+        // Проанализировал поведение эмулятора выяснил, что формат
+        // кошелька имеет вид: число "41001" + число из 8-11 цифр.
+        $paymentAccountPattern = "/\b(41001\d{8,11})\b/";
         preg_match(
-            '/Перевод на счет\s(\d+)/',
+            $paymentAccountPattern,
             $message,
             $matches
         );
 
-        return  $matches[1] ?? null;
+        return  $matches[0] ?? null;
     }
 
     /**
