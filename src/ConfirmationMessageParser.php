@@ -65,8 +65,9 @@ final class ConfirmationMessageParser
      */
     private static function extractPaymentAmount(string $message): ?PaymentAmount
     {
+        $paymentAmountPattern = "/([\d]+[\.,][\d]+|\d+) ?([А-Яа-яA-Za-z]+)/u";
         preg_match(
-            '/Спишется\s(1,01)(р)\./',
+            $paymentAmountPattern,
             $message,
             $matches
         );
